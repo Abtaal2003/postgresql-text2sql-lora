@@ -20,13 +20,13 @@ Trained with supervised fine-tuning (TRL) for one epoch on 20,000 examples from 
 
 ## Results
 
-1,000 test questions on schemas not seen in training, scored by running the queries on Postgres:
+1,000 held-out test questions, scored by running the queries on Postgres:
 
 | Model | Exact match | Executes on Postgres | Execution match |
 |:--|--:|--:|--:|
 | Base model | 47.8% | 88.9% | 37.9% |
 | + this adapter | 88.1% | 99.5% | 88.3% |
 
-Part of the gain comes from learning the dataset's conventions (for example lowercase values). With letter case ignored, execution match is 59.3% for the base model and 90.7% with the adapter. The schemas are small and mostly single-table, so this is not a measure of performance on real production databases.
+Part of the gain comes from learning the dataset's conventions (for example lowercase values). With letter case ignored, execution match is 59.3% for the base model and 90.7% with the adapter. On the 753 test questions whose tables share no columns with a training table of the same name, it is 38.4% vs 89.1%. The schemas are small and mostly single-table, so this is not a measure of performance on real production databases.
 
 Code, data pipeline and evaluation: the repository this folder belongs to (`text2sql/`). The prompt format is in `text2sql/prompts.py`; use the base model's tokenizer.

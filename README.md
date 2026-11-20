@@ -1,4 +1,4 @@
-# Postgres Text-to-SQL with LoRA
+# PostgreSQL Text-to-SQL with LoRA
 
 Fine-tuning a small open LLM (Qwen2.5-Coder-0.5B-Instruct) with LoRA to turn plain English questions into **PostgreSQL** queries, and evaluating it by running the queries on a real Postgres server instead of just comparing strings.
 
@@ -7,7 +7,7 @@ Fine-tuning a small open LLM (Qwen2.5-Coder-0.5B-Instruct) with LoRA to turn pla
 Most open text-to-SQL data comes from WikiSQL and Spider, which were written for SQLite. I wanted a model for Postgres, and found that a large share of the gold answers in the popular `b-mc2/sql-create-context` dataset do not run on Postgres at all:
 
 - **Double-quoted strings.** SQLite accepts `WHERE team = "boston celtics"`. In Postgres double quotes mean a column name, so the query fails with `column "boston celtics" does not exist`.
-- **Type strictness.** Every WikiSQL column is `VARCHAR`, so `WHERE pick = 7` or `SUM(attendance)` fail on Postgres, which does not compare or add text and numbers implicitly.
+- **Type strictness.** Most WikiSQL columns are `VARCHAR`, even ones that hold numbers, so `WHERE pick = 7` or `SUM(attendance)` fail on Postgres, which does not compare or add text and numbers implicitly.
 - **Reserved words** like `order` used as column names.
 
 So the pipeline first converts the dataset to Postgres, then keeps only the examples whose gold query actually executes on Postgres 16. Training on queries that would fail in production would teach the model the wrong dialect.
@@ -17,7 +17,7 @@ So the pipeline first converts the dataset to Postgres, then keeps only the exam
 ```
 sql-create-context (HF)
         │  prepare.py: fix quoting, run every gold query on Postgres, keep what executes,
-        │              split by schema so test tables are never seen in training
+        │              split by schema
         ▼
 data/train.jsonl, val.jsonl, test.jsonl, stats.json
         │  train.py (Kaggle T4): LoRA on all linear layers, loss on the SQL only
@@ -47,7 +47,7 @@ Most common Postgres errors in the predictions:
 Dataset: 57,688 of 78,577 examples (73.42%) have a gold query that runs on Postgres. 62,959 gold queries needed their quoting rewritten. Splits: 56,188 train / 500 val / 1,000 test.
 <!-- results:end -->
 
-Both models get the same prompt, the same 1,000 held-out questions (on schemas never seen in training) and greedy decoding.
+Both models get the same prompt, the same 1,000 held-out questions and greedy decoding.
 
 ### What the numbers mean
 
@@ -60,7 +60,16 @@ Part of it is the model learning this dataset's conventions. WikiSQL stores most
 | Base | 37.9% | 59.3% |
 | + LoRA | 88.3% | 90.7% |
 
-So about 21 points of the base model's misses are only about letter case, and the fine-tuned model is still 31 points ahead once casing is ignored. The gold answers also contain some noise (for example a "how many" question whose gold query selects a pick number), which puts a ceiling below 100% on any model. Full numbers, error counts and failure examples are in `results/metrics.json`; which examples were dropped from the dataset and why is in `data/stats.json`.
+So about 21 points of the base model's misses are only about letter case, and the fine-tuned model is still 31 points ahead once casing is ignored. The gold answers also contain some noise (for example a "how many" question whose gold query selects a pick number), which puts a ceiling below 100% on any model.
+
+The split keeps identical `CREATE TABLE` text out of both train and test, but the same WikiSQL table can show up again with its columns in a different order or with different types. In 247 of the 1,000 test questions, a training example has a table with the same name that shares at least half of the columns. Scoring the two groups separately shows the fine-tuned model is not leaning on those repeats:
+
+| Test questions | n | Base execution match | + LoRA execution match |
+|:--|--:|--:|--:|
+| No overlapping training table | 753 | 38.4% | 89.1% |
+| Overlapping training table | 247 | 36.4% | 85.8% |
+
+Full numbers, error counts and failure examples are in `results/metrics.json`; which examples were dropped from the dataset and why is in `data/stats.json`.
 
 ### Metrics
 
@@ -133,8 +142,8 @@ uv run python -m text2sql.evaluate outputs/preds_base.jsonl outputs/preds_lora.j
 - **LoRA, rank 16 on all linear layers**: trains under 2% of the weights (about 9M of 494M). The adapter is about 35 MB (vs about 1 GB for the full model), so it is easy to share and swap.
 - **Completion-only loss**: the data is passed to TRL as prompt/completion pairs, so the model is trained on the SQL it should write, not on reproducing the schema.
 - **fp32 weights + fp16 autocast on T4**: T4s do not support bf16, so the base weights stay in fp32 and fp16 autocast does the speed-up. On newer GPUs the script switches to bf16 automatically.
-- **Split by schema, not by row**: WikiSQL has many questions per table. A random split would put the same table in train and test and inflate the scores.
-- **Prediction cleanup is the same for both models**: the base model likes to add ```` ```sql ```` fences and explanations, so `extract_sql` takes the first statement for every model. Otherwise the comparison would mostly measure formatting.
+- **Split by schema, not by row**: WikiSQL has many questions per table, and a random split would put the same table in train and test and inflate the scores. The split groups examples by their exact `CREATE TABLE` text. Some tables still come back with reordered or retyped columns, so the results above are also reported on the 753 test questions with no overlapping training table.
+- **Prediction cleanup is the same for both models**: `extract_sql` strips ```` ```sql ```` fences, explanations and trailing semicolons and keeps the first statement, for every model, so the comparison measures the SQL and not the formatting. In this run the base model mostly answered with plain SQL, and the cleanup changed only 16 of its 1,000 replies.
 
 ## Limitations
 

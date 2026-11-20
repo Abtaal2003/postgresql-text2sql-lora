@@ -3,7 +3,7 @@
 1. Download b-mc2/sql-create-context from Hugging Face.
 2. Convert each gold query to Postgres (see postgresify.py).
 3. Run it on a real Postgres server against its schema and keep it only if it executes.
-4. Split by schema, so no table in the test set was seen during training.
+4. Split by schema (the exact CREATE TABLE text), so no schema appears in more than one split.
 
 Usage:
     python -m text2sql.prepare --out data
@@ -68,7 +68,7 @@ def main():
         if (i + 1) % 5000 == 0:
             print(f"{i + 1}/{len(examples)} checked, {len(kept)} kept")
 
-    # Group by schema so the same table never appears in two splits.
+    # Group by schema text so the same CREATE TABLE never appears in two splits.
     groups = defaultdict(list)
     for row in kept:
         groups[row["context"]].append(row)
