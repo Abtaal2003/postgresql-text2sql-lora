@@ -1,0 +1,26 @@
+{
+  "source_examples": 78577,
+  "kept": 57688,
+  "kept_pct": 73.42,
+  "gold_queries_rewritten_for_postgres": 62959,
+  "splits": {
+    "train": 56188,
+    "val": 500,
+    "test": 1000
+  },
+  "dropped": {
+    "query_error:UndefinedFunction": 18094,
+    "query_error:SyntaxError": 1018,
+    "query_error:InvalidTextRepresentation": 754,
+    "query_error:GroupingError": 378,
+    "query_error:UndefinedColumn": 185,
+    "schema_error:SyntaxError": 168,
+    "schema_error:DuplicateTable": 137,
+    "query_error:DatatypeMismatch": 115,
+    "schema_error:DuplicateColumn": 26,
+    "query_error:InvalidColumnReference": 8,
+    "query_error:UndefinedTable": 3,
+    "query_error:WrongObjectType": 2,
+    "duplicate": 1
+  }
+}

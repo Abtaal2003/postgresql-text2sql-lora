@@ -1,0 +1,16 @@
+{"question": "How many heads of the departments are older than 56 ?", "context": "CREATE TABLE head (age INTEGER)", "answer": "SELECT COUNT(*) FROM head WHERE age > 56"}
+{"question": "List the name, born state and age of the heads of departments ordered by age.", "context": "CREATE TABLE head (name VARCHAR, born_state VARCHAR, age VARCHAR)", "answer": "SELECT name, born_state, age FROM head ORDER BY age"}
+{"question": "What position does the player from the Boston Celtics play?", "context": "CREATE TABLE table_name_95 (position VARCHAR, team VARCHAR)", "answer": "SELECT position FROM table_name_95 WHERE team = \"boston celtics\""}
+{"question": "Which school did the player who was picked 7 attend?", "context": "CREATE TABLE table_name_12 (school VARCHAR, pick VARCHAR)", "answer": "SELECT school FROM table_name_12 WHERE pick = 7"}
+{"question": "Which school did the player with pick 7 attend?", "context": "CREATE TABLE table_name_13 (school VARCHAR, pick VARCHAR)", "answer": "SELECT school FROM table_name_13 WHERE pick = \"7\""}
+{"question": "What is the total attendance when the opponent was Dallas?", "context": "CREATE TABLE table_name_44 (attendance VARCHAR, opponent VARCHAR)", "answer": "SELECT SUM(attendance) FROM table_name_44 WHERE opponent = \"dallas\""}
+{"question": "What is the highest round for a player from Ohio State?", "context": "CREATE TABLE table_name_50 (round INTEGER, college VARCHAR)", "answer": "SELECT MAX(round) FROM table_name_50 WHERE college = \"ohio state\""}
+{"question": "Show the names of departments where a temporary acting head works.", "context": "CREATE TABLE department (name VARCHAR, department_id VARCHAR); CREATE TABLE management (department_id VARCHAR, temporary_acting VARCHAR)", "answer": "SELECT DISTINCT T1.name FROM department AS T1 JOIN management AS T2 ON T1.department_id = T2.department_id WHERE T2.temporary_acting = 'Yes'"}
+{"question": "What is the order for the song O'Brien sang?", "context": "CREATE TABLE table_1 (order VARCHAR, singer VARCHAR)", "answer": "SELECT order FROM table_1 WHERE singer = \"o'brien\""}
+{"question": "Who sang \"Hey Jude\"?", "context": "CREATE TABLE table_2 (singer VARCHAR, song VARCHAR)", "answer": "SELECT singer FROM table_2 WHERE song = \"hey jude\""}
+{"question": "How many heads of the departments are older than 56 ?", "context": "CREATE TABLE head (age INTEGER)", "answer": "SELECT COUNT(*) FROM head WHERE age > 56"}
+{"question": "What team does the pick with a name of John play for?", "context": "CREATE TABLE table_name_77 (team VARCHAR, name VARCHAR)", "answer": "SELECT team FROM table_name_77 WHERE \"name\" = \"john\""}
+{"question": "Count the players per team.", "context": "CREATE TABLE player (team VARCHAR, player_id INTEGER)", "answer": "SELECT team, COUNT(*) FROM player GROUP BY team"}
+{"question": "Which years had more than 3 wins?", "context": "CREATE TABLE table_name_9 (year VARCHAR, wins INTEGER)", "answer": "SELECT year FROM table_name_9 WHERE wins > 3"}
+{"question": "Average budget of departments?", "context": "CREATE TABLE department (budget_in_billions INTEGER)", "answer": "SELECT AVG(budget_in_billions) FROM department"}
+{"question": "Names of cities, latest founded first.", "context": "CREATE TABLE city (name VARCHAR, founded INTEGER)", "answer": "SELECT name FROM city ORDER BY founded DESC"}

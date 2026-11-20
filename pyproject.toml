@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "postgresql-text2sql-lora"
+version = "0.1.0"
+description = "LoRA fine-tuning a small LLM for PostgreSQL text-to-SQL, evaluated on a real Postgres server"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "psycopg[binary]>=3.2",
+    "datasets>=3.0",
+]
+
+[project.optional-dependencies]
+train = [
+    "torch>=2.4",
+    "transformers>=5.0",
+    "trl>=1.0",
+    "peft>=0.17",
+    "accelerate>=1.0",
+]
+dev = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["text2sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

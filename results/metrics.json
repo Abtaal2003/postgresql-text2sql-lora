@@ -1,0 +1,154 @@
+[
+  {
+    "file": "preds_base.jsonl",
+    "n": 1000,
+    "exact_match": 47.8,
+    "executes": 88.9,
+    "execution_match": 37.9,
+    "gold_non_empty_pct": 87.4,
+    "errors": {
+      "UndefinedColumn": 58,
+      "UndefinedFunction": 30,
+      "UndefinedTable": 9,
+      "SyntaxError": 8,
+      "GroupingError": 5,
+      "AmbiguousFunction": 1
+    },
+    "failure_examples": [
+      {
+        "question": "What is City of License, when Frequency is 101.1?",
+        "gold": "SELECT city_of_license FROM table_name_20 WHERE frequency = '101.1'",
+        "pred": "SELECT city_of_license FROM table_name_20 WHERE frequency = 101.1",
+        "error": "UndefinedFunction"
+      },
+      {
+        "question": "Who was asked 20 questions in the issue where the centerfold is Marliece Andrada?",
+        "gold": "SELECT 20 AS _questions FROM table_1566850_9 WHERE centerfold_model = 'Marliece Andrada'",
+        "pred": "SELECT T1.centerfold_model FROM table_1566850_9 AS T1 JOIN table_1566850_9 AS T2 ON T1.centerfold_model = T2.centerfold_model WHERE T2.centerfold_model = 'Marliece Andrada' AND T1.question_count = 20",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "what's the\u00a0village\u00a0with\u00a0wine style\u00a0being red wine and\u00a0vineyard surface (2010)\u00a0being hectares (acres)",
+        "gold": "SELECT village FROM table_13981938_1 WHERE wine_style = 'Red wine' AND vineyard_surface__2010_ = 'hectares (acres)'",
+        "pred": "SELECT village FROM table_13981938_1 WHERE wine_style = 'red wine' AND vineyard_surface__2010 = 'hectares'",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "What are the names of perpetrators whose country is not \"China\"?",
+        "gold": "SELECT T1.Name FROM people AS T1 JOIN perpetrator AS T2 ON T1.People_ID = T2.People_ID WHERE T2.Country <> 'China'",
+        "pred": "SELECT Name FROM perpetrator WHERE Country != 'China'",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "What are the names of perpetrators in country \"China\" or \"Japan\"?",
+        "gold": "SELECT T1.Name FROM people AS T1 JOIN perpetrator AS T2 ON T1.People_ID = T2.People_ID WHERE T2.Country = 'China' OR T2.Country = 'Japan'",
+        "pred": "SELECT Name FROM perpetrator WHERE Country IN ('China', 'Japan')",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "Who was the away team that played Fitzroy on May 13, 1950 at Brunswick Street Oval.",
+        "gold": "SELECT away_team FROM table_name_86 WHERE venue = 'brunswick street oval'",
+        "pred": "SELECT away_team FROM table_name_86 WHERE venue = 'Brunswick Street Oval' AND away_team = 'Fitzroy' AND date_part('year', date_trunc('month', date_trunc('day', '2023-05-13'))) = 1950",
+        "error": "AmbiguousFunction"
+      },
+      {
+        "question": "Who is the president representing the Creuse department?",
+        "gold": "SELECT pr\u00e9sident FROM table_name_10 WHERE d\u00e9partment__or_collectivity_ = 'creuse'",
+        "pred": "SELECT pr\u00e9sident FROM table_name_10 WHERE d\u00e9partement__or_collectivity_ = 'Creuse'",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "Who directed the episode that had 5.92 million viewers?",
+        "gold": "SELECT directed_by FROM table_25341765_1 WHERE us_viewers__million_ = '5.92'",
+        "pred": "SELECT T1.directed_by FROM table_25341765_1 AS T1 INNER JOIN table_25341765_2 AS T2 ON T1.us_viewers__million_ = T2.us_viewers__million WHERE T2.directed_by = 'The Matrix' AND T2.us_viewers__million_ = 5.92",
+        "error": "UndefinedTable"
+      },
+      {
+        "question": "Which Region served has  of 1176 m 1190 m HAAT (Analog/ Digital) 1?",
+        "gold": "SELECT region_served FROM table_name_43 WHERE haat__analog__digital__1 = '1176 m 1190 m'",
+        "pred": "SELECT region_served FROM table_name_43 WHERE haat__analog__digital__1 = '1' AND haat__analog__digital__2 = '1' AND haat__analog__digital__3 = '1' AND haat__analog__digital__4 = '1' AND haat__analog__digital__5 = '1' AND haat__analog__digital__6 = '1' AND haat__analog__digital__7 = '1' AND haat__analog__digital__8 = '1' AND haat__analog__digital__9 = '1' AND haat__analog__digital__10 = '1' AND haat__analog__digital__",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "What is the score for round 2 for team Toshiba?",
+        "gold": "SELECT COUNT(round2) FROM table_16815824_1 WHERE team = 'team Toshiba'",
+        "pred": "SELECT score FROM table_16815824_1 WHERE round2 = 'round 2' AND team = 'Toshiba'",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "Tell me the NHL team for mike gaffney",
+        "gold": "SELECT nhl_team FROM table_name_53 WHERE player = 'mike gaffney'",
+        "pred": "SELECT hnl_team FROM table_name_53 WHERE player = 'mike gaffney'",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "How many seats does the election with the outcome of election of minority in parliament and 186,226 PNC votes have?",
+        "gold": "SELECT seats FROM table_name_86 WHERE outcome_of_election = 'minority in parliament' AND number_of_pnc_votes = '186,226'",
+        "pred": "SELECT COUNT(seats) FROM table_name_86 WHERE outcome_of_election = 'minority' AND number_of_pnc_votes = 186226",
+        "error": "UndefinedFunction"
+      },
+      {
+        "question": "What is Position, when Height in Ft. is 6-10?",
+        "gold": "SELECT position FROM table_name_21 WHERE height_in_ft = '6-10'",
+        "pred": "SELECT position FROM table_name_21 WHERE height_in_ft BETWEEN 6 AND 10",
+        "error": "UndefinedFunction"
+      },
+      {
+        "question": "Who directed the eposide that was watched by 1.95 million US viewers?",
+        "gold": "SELECT directed_by FROM table_26736342_1 WHERE us_viewers__millions_ = '1.95'",
+        "pred": "SELECT T1.directed_by FROM table_26736342_1 AS T1 INNER JOIN table_26736342_2 AS T2 ON T1.directed_by = T2.directed_by WHERE T2.us_viewers__millions_ = '1.95'",
+        "error": "UndefinedTable"
+      },
+      {
+        "question": "Who were all the candidates when the results were re-elected, first elected was 1832 and the party was jacksonian?",
+        "gold": "SELECT candidates FROM table_2668199_2 WHERE result = 'Re-elected' AND first_elected = '1832' AND party = 'Jacksonian'",
+        "pred": "SELECT DISTINCT candidates FROM table_2668199_2 WHERE party = 'Jacksonian' AND result = 're-elected' AND first_elected = 1832",
+        "error": "UndefinedFunction"
+      }
+    ]
+  },
+  {
+    "file": "preds_lora.jsonl",
+    "n": 1000,
+    "exact_match": 88.1,
+    "executes": 99.5,
+    "execution_match": 88.3,
+    "gold_non_empty_pct": 91.8,
+    "errors": {
+      "UndefinedColumn": 3,
+      "InvalidTextRepresentation": 2
+    },
+    "failure_examples": [
+      {
+        "question": "Find all the songs performed by artist with last name \"Heilo\"",
+        "gold": "SELECT T3.Title FROM Performance AS T1 JOIN Band AS T2 ON T1.bandmate = T2.id JOIN Songs AS T3 ON T3.SongId = T1.SongId WHERE T2.Lastname = 'Heilo'",
+        "pred": "SELECT T1.Title FROM Performance AS T1 JOIN Band AS T2 ON T1.bandmate = T2.id WHERE T2.Lastname = 'Heilo'",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "What is the average number of cities of markets with low film market estimate bigger than 10000?",
+        "gold": "SELECT AVG(T2.Number_cities) FROM film_market_estimation AS T1 JOIN market AS T2 ON T1.Market_ID = T2.Market_ID WHERE T1.Low_Estimate > 10000",
+        "pred": "SELECT AVG(T2.Number_cities) FROM market AS T1 JOIN film_market_estimation AS T2 ON T1.Market_ID = T2.Market_ID WHERE T2.Low_Estimate > 10000",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "What are the names of entrepreneurs?",
+        "gold": "SELECT T2.Name FROM entrepreneur AS T1 JOIN people AS T2 ON T1.People_ID = T2.People_ID",
+        "pred": "SELECT T1.Name FROM entrepreneur AS T1 JOIN people AS T2 ON T1.People_ID = T2.People_ID",
+        "error": "UndefinedColumn"
+      },
+      {
+        "question": "What is the maximum 2002 figure when 2008 is 19.5, 2006 is less than 24.5 and 1999 is 18.3?",
+        "gold": "SELECT MAX(2002) FROM table_name_38 WHERE 2008 > 19.5 AND 2006 < 24.5 AND 1999 = 18.3",
+        "pred": "SELECT MAX(2002) FROM table_name_38 WHERE 2008 = '19.5' AND 2006 < 24.5 AND 1999 = '18.3'",
+        "error": "InvalidTextRepresentation"
+      },
+      {
+        "question": "Which 1965 has a 1962 of 0.35000000000000003, and a 1967 smaller than 0.53?",
+        "gold": "SELECT MIN(1965) FROM table_name_38 WHERE 1962 = 0.35000000000000003 AND 1967 < 0.53",
+        "pred": "SELECT 1965 FROM table_name_38 WHERE 1962 = '0.35000000000000003' AND 1967 < 0.53",
+        "error": "InvalidTextRepresentation"
+      }
+    ]
+  }
+]
